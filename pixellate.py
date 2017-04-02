@@ -1,6 +1,6 @@
 from PIL.Image import open
 from sys import argv
-from pix_opengl import init_opengl, set_texture, draw, build_shader
+from pix_opengl import init_opengl, set_texture, draw, build_shader, init_shader_sizes, set_averages
 import time
 import pymp
 import numpy
@@ -64,10 +64,11 @@ def average_image(columns, rows):
 
 
 init_opengl(width, height)
-build_shader(width, height, columns, rows)
+build_shader(columns, rows)
+init_shader_sizes(width, height, columns, rows)
 set_texture(image)
 
 for i in range(frames):
-    print(average_image(columns, rows))
+    set_averages(average_image(columns, rows))
     draw()
     time.sleep(1)

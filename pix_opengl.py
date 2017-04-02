@@ -54,31 +54,45 @@ def draw():                                            # ondraw is called all th
     
     glutSwapBuffers()                                  # important for double buffering
 
+
+UNIFORM_LOCATIONS = {}
 #this code helped me understand defining shaders in python: http://pyopengl.sourceforge.net/context/tutorials/shader_1.html 
-def build_shader(width, height, columns, rows):
+def build_shader(columns, rows):
     VERTEX_SHADER = shaders.compileShader("""#version 120
         void main() {
             gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
         }""", GL_VERTEX_SHADER)
-    
-    FRAGMENT_SHADER = shaders.compileShader("""#version 120
-        uniform vec3[%d] averages;//multidimentional arrays are not supported by the version of the GLSL I'm using
 
-        void main() {
-            int width   = %d;
-            int height  = %d;
-            int columns = %d;
-            int rows    = %d;
-            float x = gl_FragCoord.x;
-            float y = gl_FragCoord.y;
-            
-            if (x < width/2) {
-                gl_FragColor = vec4( 0.8, 1, 1, 1 );
-            } else {
-                gl_FragColor = vec4( 0.8, .5, 0, 1 );
-            }
-        }""" % (width, height, columns, rows, columns*rows), GL_FRAGMENT_SHADER)
-    shaders.glUseProgram(shaders.compileProgram(VERTEX_SHADER,FRAGMENT_SHADER))
+    with open("frag_shader.glsl") as frag_shader:
+        FRAGMENT_SHADER = shaders.compileShader(frag_shader.read() % (columns*rows), GL_FRAGMENT_SHADER)
+        shader = shaders.compileProgram(VERTEX_SHADER,FRAGMENT_SHADER)
+        shaders.glUseProgram(shader)
+        global UNIFORM_LOCATIONS
+        UNIFORM_LOCATIONS = {
+            'width': glGetUniformLocation(shader, 'width'),
+            'height': glGetUniformLocation(shader, 'height'),
+            'columns': glGetUniformLocation(shader, 'columns'),
+            'rows': glGetUniformLocation(shader, 'rows'),
+            'averages': glGetUniformLocation(shader, 'averages'),
+        }
+
+
+def init_shader_sizes(width, height, columns, rows):
+    print(UNIFORM_LOCATIONS)
+    glUniform1i(UNIFORM_LOCATIONS['width'], width)
+    glUniform1i(UNIFORM_LOCATIONS['height'],height)
+    glUniform1i(UNIFORM_LOCATIONS['columns'], columns)
+    glUniform1i(UNIFORM_LOCATIONS['rows'], rows)
+
+
+def set_averages(averages):
+    averages1d = sum(averages, [])
+    glUniform3fv( 
+                    UNIFORM_LOCATIONS['averages'],
+                    len(averages1d),
+                    averages1d
+                )
+
 
 def init_opengl(width, height):
     glConf["width"] = width
