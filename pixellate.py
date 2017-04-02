@@ -1,6 +1,6 @@
 from PIL.Image import open
 from sys import argv
-from pix_opengl import init_opengl, set_texture, draw
+from pix_opengl import init_opengl, set_texture, draw, build_shader
 import time
 import pymp
 import numpy
@@ -18,9 +18,6 @@ frames = 1
 
 chunkWidth  = int(width/columns)
 chunkHeight = int(height/rows)
-
-init_opengl(width, height)
-set_texture(image)
 
 def do_chunk(column, row):
     chunkStartX = column * chunkWidth
@@ -65,6 +62,10 @@ def average_image(columns, rows):
 
         return columnValues
 
+
+init_opengl(width, height)
+build_shader(width, height, columns, rows)
+set_texture(image)
 
 for i in range(frames):
     print(average_image(columns, rows))

@@ -7,7 +7,6 @@ glConf = {}
 
 # courtesy of tutorial: https://noobtuts.com/python/opengl-introduction
 def draw_rect(x, y, width, height):
-    width, height = width/4, height/4
     glBegin(GL_QUADS)
     # start drawing a rectangle
     glTexCoord2f(0,0)
@@ -56,15 +55,29 @@ def draw():                                            # ondraw is called all th
     glutSwapBuffers()                                  # important for double buffering
 
 #this code helped me understand defining shaders in python: http://pyopengl.sourceforge.net/context/tutorials/shader_1.html 
-def build_shader():
+def build_shader(width, height, columns, rows):
     VERTEX_SHADER = shaders.compileShader("""#version 120
         void main() {
             gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
         }""", GL_VERTEX_SHADER)
+    
     FRAGMENT_SHADER = shaders.compileShader("""#version 120
+        uniform vec3[%d] averages;//multidimentional arrays are not supported by the version of the GLSL I'm using
+
         void main() {
-            gl_FragColor = vec4( 0.8, .5, 0, 1 );
-        }""", GL_FRAGMENT_SHADER)
+            int width   = %d;
+            int height  = %d;
+            int columns = %d;
+            int rows    = %d;
+            float x = gl_FragCoord.x;
+            float y = gl_FragCoord.y;
+            
+            if (x < width/2) {
+                gl_FragColor = vec4( 0.8, 1, 1, 1 );
+            } else {
+                gl_FragColor = vec4( 0.8, .5, 0, 1 );
+            }
+        }""" % (width, height, columns, rows, columns*rows), GL_FRAGMENT_SHADER)
     shaders.glUseProgram(shaders.compileProgram(VERTEX_SHADER,FRAGMENT_SHADER))
 
 def init_opengl(width, height):
@@ -76,6 +89,5 @@ def init_opengl(width, height):
     glutInitWindowPosition(0, 0)                           # set window position
     glConf["window"] = glutCreateWindow("blockify")              # create window with title
     glEnable(GL_TEXTURE_2D)
-    #build_shader()
     draw()
 
