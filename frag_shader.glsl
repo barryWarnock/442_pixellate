@@ -9,18 +9,10 @@ uniform int rows;
 void main() {
   float x = gl_FragCoord.x;
   float y = gl_FragCoord.y;
-  
-  if (y < height/2) {
-    if (x < width/2) {
-      gl_FragColor = vec4( 0.8, 1, 0, 1 );
-    } else {
-      gl_FragColor = vec4( 0.8, 1, 1, 1 );
-    }
-  } else {
-    if (x < width/2) {
-      gl_FragColor = vec4( 1, .8, 1, 1 );
-    } else {
-      gl_FragColor = vec4( 0.8, .8, 1, 1 );
-    }
-  }
+  float chunkWidth  = width/columns;
+  float chunkHeight = height/rows;
+  int chunkX = int(x/chunkWidth);
+  int chunkY = int(y/chunkHeight);
+  vec3 colour = averages[(chunkX*rows )+chunkY];
+  gl_FragColor = vec4(colour[0]/255.0, colour[1]/255.0, colour[2]/255.0, 1.0);
 }

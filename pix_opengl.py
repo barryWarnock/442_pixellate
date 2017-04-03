@@ -78,7 +78,6 @@ def build_shader(columns, rows):
 
 
 def init_shader_sizes(width, height, columns, rows):
-    print(UNIFORM_LOCATIONS)
     glUniform1i(UNIFORM_LOCATIONS['width'], width)
     glUniform1i(UNIFORM_LOCATIONS['height'],height)
     glUniform1i(UNIFORM_LOCATIONS['columns'], columns)
@@ -87,11 +86,11 @@ def init_shader_sizes(width, height, columns, rows):
 
 def set_averages(averages):
     averages1d = sum(averages, [])
+    print(averages1d)
     glUniform3fv( 
-                    UNIFORM_LOCATIONS['averages'],
-                    len(averages1d),
-                    averages1d
-                )
+        UNIFORM_LOCATIONS['averages'],
+        len(averages1d),
+        averages1d)
 
 
 def init_opengl(width, height):
