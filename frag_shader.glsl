@@ -13,6 +13,6 @@ void main() {
   float chunkHeight = height/rows;
   int chunkX = int(x/chunkWidth);
   int chunkY = int(y/chunkHeight);
-  vec3 colour = averages[(chunkX*rows )+chunkY];
+  vec3 colour = averages[(chunkX*rows)+(columns-chunkY)];
   gl_FragColor = vec4(colour[0]/255.0, colour[1]/255.0, colour[2]/255.0, 1.0);
 }
