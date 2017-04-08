@@ -6,13 +6,15 @@ import time
 import pymp
 import numpy
 from concurrent.futures import *
+import imageio
 
 pymp.config.nested = True
 
 image = open(argv[1])
+outName = argv[2]
 frame = None
-columns = int(argv[2])
-rows = int(argv[3])
+columns = int(argv[3])
+rows = int(argv[4])
 
 width, height = image.size
 
@@ -67,7 +69,7 @@ def average_image(columns, rows):
 init_opengl(width, height)
 build_shader(columns, rows)
 init_shader_sizes(width, height, columns, rows)
-
+draw()
 try:
     newFrames = []
     while True:
@@ -75,9 +77,10 @@ try:
         set_texture(frame)
 
         set_averages(average_image(columns, rows))
-        newFrames.append(Image.frombytes("RGB", (width, height), texture_as_image()))
         draw()
+        newFrames.append(Image.frombytes("RGB", (width, height), texture_as_image()).transpose(Image.FLIP_TOP_BOTTOM))
+
 
         image.seek(image.tell()+1)
 except EOFError:
-    newFrames[0].show()
+    imageio.mimsave(outName, [numpy.array(frame) for frame in newFrames])        

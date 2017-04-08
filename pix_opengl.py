@@ -45,8 +45,9 @@ def set_texture(image):
 
 def texture_as_image():
     global ID
-    
-    return glGetTexImage( GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE )
+    #GL_TEXTURE_2D,     0, GL_RGB, GL_UNSIGNED_BYTE
+    #target       , level,  
+    return glReadPixels(0,0, glConf["width"], glConf["height"], GL_RGB, GL_UNSIGNED_BYTE)
 
 
 def refresh2d(width, height):
@@ -115,5 +116,5 @@ def init_opengl(width, height):
     glutInitWindowPosition(0, 0)                           # set window position
     glConf["window"] = glutCreateWindow("blockify")              # create window with title
     glEnable(GL_TEXTURE_2D)
-    draw()
+    draw();draw()
 
