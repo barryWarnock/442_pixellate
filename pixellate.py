@@ -9,17 +9,17 @@ from concurrent.futures import *
 pymp.config.nested = True
 
 image = open(argv[1])
-
+frame = None
 columns = int(argv[2])
 rows = int(argv[3])
 
 width, height = image.size
-frames = 1
 
 chunkWidth  = int(width/columns)
 chunkHeight = int(height/rows)
 
 def do_chunk(column, row):
+    global frame
     chunkStartX = column * chunkWidth
     chunkStartY = row * chunkHeight
     count = 0
@@ -28,7 +28,7 @@ def do_chunk(column, row):
     for x in range(chunkStartX, chunkStartX+chunkWidth):
         for y in range(chunkStartY, chunkStartY+chunkHeight):
             count += 1
-            pixel = image.getpixel((x,y))
+            pixel = frame.getpixel((x,y))
             average[0] += pixel[0]
             average[1] += pixel[1]
             average[2] += pixel[2]
@@ -66,10 +66,15 @@ def average_image(columns, rows):
 init_opengl(width, height)
 build_shader(columns, rows)
 init_shader_sizes(width, height, columns, rows)
-set_texture(image)
 
-for i in range(frames):
-    set_averages(average_image(columns, rows))
-    draw()
-while(1):
+try:
+    while True:
+        frame = image.convert("RGB")
+        set_texture(frame)
+
+        set_averages(average_image(columns, rows))
+        draw()
+
+        image.seek(image.tell()+1)
+except EOFError:
     pass

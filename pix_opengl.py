@@ -27,9 +27,12 @@ def set_texture(image):
     ID = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D, ID)
     glPixelStorei(GL_UNPACK_ALIGNMENT,1)
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
     glTexImage2D(
         GL_TEXTURE_2D, 0, 3, glConf["width"], glConf["height"], 0,
-        GL_RGBA, GL_UNSIGNED_BYTE, image.tobytes("raw", "RGBX", 0, -1)
+        GL_RGB, GL_UNSIGNED_BYTE, image.tobytes("raw", "RGB", 0, -1)
     )
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
@@ -90,7 +93,6 @@ def init_shader_sizes(width, height, columns, rows):
 
 def set_averages(averages):
     averages1d = sum(averages, [])
-    print(averages1d)
     glUniform3fv( 
         UNIFORM_LOCATIONS['averages'],
         len(averages1d),
