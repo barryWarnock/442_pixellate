@@ -1,6 +1,7 @@
 from PIL.Image import open
+from PIL import Image
 from sys import argv
-from pix_opengl import init_opengl, set_texture, draw, build_shader, init_shader_sizes, set_averages
+from pix_opengl import init_opengl, set_texture, draw, build_shader, init_shader_sizes, set_averages, texture_as_image
 import time
 import pymp
 import numpy
@@ -68,13 +69,15 @@ build_shader(columns, rows)
 init_shader_sizes(width, height, columns, rows)
 
 try:
+    newFrames = []
     while True:
         frame = image.convert("RGB")
         set_texture(frame)
 
         set_averages(average_image(columns, rows))
+        newFrames.append(Image.frombytes("RGB", (width, height), texture_as_image()))
         draw()
 
         image.seek(image.tell()+1)
 except EOFError:
-    pass
+    newFrames[0].show()

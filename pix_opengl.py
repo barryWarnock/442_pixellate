@@ -22,8 +22,11 @@ def draw_rect(x, y, width, height):
     glVertex2f(x, y + height)                          # top left point
     glEnd()
 
+
+ID = None    
 #this article helped me understand textures https://www.gamedev.net/resources/_/technical/opengl/opengl-texture-mapping-an-introduction-r947
-def set_texture(image):    
+def set_texture(image):
+    global ID
     ID = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D, ID)
     glPixelStorei(GL_UNPACK_ALIGNMENT,1)
@@ -39,6 +42,13 @@ def set_texture(image):
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
     glBindTexture(GL_TEXTURE_2D, ID)
 
+
+def texture_as_image():
+    global ID
+    
+    return glGetTexImage( GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE )
+
+
 def refresh2d(width, height):
     glViewport(0, 0, width, height)
     glMatrixMode(GL_PROJECTION)
@@ -46,6 +56,7 @@ def refresh2d(width, height):
     glOrtho(0.0, width, 0.0, height, 0.0, 1.0)
     glMatrixMode (GL_MODELVIEW)
     glLoadIdentity()
+
 
 def draw():                                            # ondraw is called all the time
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # clear the screen
@@ -56,10 +67,6 @@ def draw():                                            # ondraw is called all th
     draw_rect(0,0,glConf["width"], glConf["height"])
     
     glutSwapBuffers()                                  # important for double buffering
-
-
-def texture_as_image():
-    return ""
 
 
 UNIFORM_LOCATIONS = {}
