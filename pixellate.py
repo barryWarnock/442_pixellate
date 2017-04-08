@@ -71,4 +71,5 @@ set_texture(image)
 for i in range(frames):
     set_averages(average_image(columns, rows))
     draw()
-    time.sleep(10)
+while(1):
+    pass

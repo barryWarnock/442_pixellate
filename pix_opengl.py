@@ -55,6 +55,10 @@ def draw():                                            # ondraw is called all th
     glutSwapBuffers()                                  # important for double buffering
 
 
+def texture_as_image():
+    return ""
+
+
 UNIFORM_LOCATIONS = {}
 #this code helped me understand defining shaders in python: http://pyopengl.sourceforge.net/context/tutorials/shader_1.html 
 def build_shader(columns, rows):
